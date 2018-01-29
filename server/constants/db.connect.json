@@ -1,0 +1,3 @@
+{
+	"db_connect": "mongodb://localhost/social-network"
+}

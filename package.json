@@ -1,0 +1,90 @@
+{
+  "name": "social_network",
+  "version": "1.0.0",
+  "description": "demo social network",
+  "main": "index.js",
+  "babel": {
+    "presets": [
+      "es2015",
+      "es2016",
+      "stage-0"
+    ]
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "node_modules/*"
+    ]
+  },
+  "scripts": {
+    "test": "ng test",
+    "dev": "nodemon ./server/index.js & npm start",
+    "ng": "ng",
+    "start": "ng serve --port 3001",
+    "build": "ng build --prod",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valeriimon/demo_social_network.git"
+  },
+  "author": "Valerii Monakhov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valeriimon/demo_social_network/issues"
+  },
+  "homepage": "https://github.com/valeriimon/demo_social_network#readme",
+  "dependencies": {
+    "@angular/animations": "^5.1.0",
+    "@angular/cli": "^1.6.4",
+    "@angular/common": "^5.1.0",
+    "@angular/compiler": "^5.1.0",
+    "@angular/core": "^5.1.0",
+    "@angular/forms": "^5.1.0",
+    "@angular/http": "^5.1.0",
+    "@angular/platform-browser": "^5.1.0",
+    "@angular/platform-browser-dynamic": "^5.1.0",
+    "@angular/router": "^5.1.0",
+    "babel-regenerator-runtime": "^6.5.0",
+    "bluebird": "^3.5.1",
+    "core-js": "^2.4.1",
+    "koa": "^2.4.1",
+    "koa-body": "^2.5.0",
+    "koa-multer": "^1.0.2",
+    "koa-passport": "^4.0.1",
+    "koa-router": "^7.3.0",
+    "koa-session": "^5.8.1",
+    "koa-static": "^4.0.2",
+    "lodash": "^4.17.4",
+    "mongoose": "^5.0.0",
+    "nodemon": "^1.14.11",
+    "rxjs": "^5.5.6",
+    "socket.io": "^2.0.4",
+    "zone.js": "^0.8.19"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "^5.1.0",
+    "@angular/language-service": "^5.1.0",
+    "@types/jasmine": "~2.8.3",
+    "@types/jasminewd2": "~2.0.2",
+    "@types/node": "~6.0.60",
+    "aliv": "^1.9.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "codelyzer": "^4.0.1",
+    "jasmine-core": "~2.8.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~2.0.0",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-cli": "~1.0.1",
+    "karma-coverage-istanbul-reporter": "^1.2.1",
+    "karma-jasmine": "~1.1.0",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "protractor": "~5.1.2",
+    "ts-node": "~3.2.0",
+    "tslint": "~5.9.1",
+    "typescript": "~2.5.3"
+  }
+}
