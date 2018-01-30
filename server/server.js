@@ -10,6 +10,7 @@ import koaBody from 'koa-body';
 import IO from 'socket.io';
 import DbConfig from './config/db.config';
 import Routes from './routes/test_router';
+import UserRoutes from './routes/user';
 const PORT = process.env.PORT || 3000;
 
 const upload = multer({dest: './files/media'});
@@ -20,7 +21,8 @@ const app = new Koa();
 const io = new IO(http);
 
 app.upload = upload;
-
+app.keys = ["QEAXIZKOtlQmYQRdycRB3NOeToW3OJcZ"];
+require('./commons/auth');
 app.use(session({}, app));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -28,6 +30,7 @@ app.use(koaBody({ multipart: true }));
 
 DbConfig.init();
 Routes.init(app, router);
+UserRoutes.init(app, router);
 
 
 http.createServer(app.callback())

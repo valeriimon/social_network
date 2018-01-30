@@ -1,9 +1,9 @@
 const fs = require("fs"),
       path = require("path"),
       crypto = require("crypto"),
-      pathToMedia = path.normalize(`${__dirname}../../files/media`)
+      pathToMedia = path.normalize(`${__dirname}../../files/media`),
       cipterAlgorithm = 'aes-256-cbc',
-      hmacMethod = 'sha259',
+      hmacMethod = 'sha256',
       salt = '1v4a7l0e5r6a';
 
 export default class Utils{
@@ -36,11 +36,17 @@ export default class Utils{
         return {encrypted, hash}
     }
 
+    static async saveFile(){
+        return new Promise((resolve, reject)=>{
+
+        })
+    }
+
     static async removeFile(path){
         return new Promise((resolv,reject)=>{
           return fs.unlink(path, function(err) {
             return resolv(err);
           });
         });
-      }
+    }
 }
