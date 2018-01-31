@@ -7,11 +7,7 @@ const mongoose = require("mongoose"),
 const AlbumPostSchema = BaseModel.extend(new Schema({
     image: String,
     body: String,
-    albumName: String,
-    refTo: {
-        user: {type: Schema.Types.ObjectId, ref: "User"},
-        group: {type: Schema.Types.ObjectId, ref: "Group"}
-    } 
+    album: {type: Schema.Types.ObjectId, ref: "Album"},
 }))
 
 

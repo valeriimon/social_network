@@ -1,5 +1,6 @@
 import http from 'http';
 import os from 'os';
+import path from 'path';
 
 import Koa from 'koa';
 import routerCb from 'koa-router';
@@ -13,14 +14,13 @@ import Routes from './routes/test_router';
 import UserRoutes from './routes/user';
 const PORT = process.env.PORT || 3000;
 
-const upload = multer({dest: './files/media'});
+
 const router = routerCb();
 
 const app = new Koa();
 
 const io = new IO(http);
 
-app.upload = upload;
 app.keys = ["QEAXIZKOtlQmYQRdycRB3NOeToW3OJcZ"];
 require('./commons/auth');
 app.use(session({}, app));
