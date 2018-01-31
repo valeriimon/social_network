@@ -8,6 +8,7 @@ const GroupSchema = BaseModel.extend(new Schema({
     name: {type: String, required: true},
     members: Number,
     author: {type: Schema.Types.ObjectId, ref:"User"},
+    owner: {type:Schema.Types.ObjectId, ref: "User"},
     description: String,
     images: {type: Array, default: []} 
 }))
