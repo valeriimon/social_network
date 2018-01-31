@@ -53,11 +53,26 @@ UserSchema.methods.create = async function(body){
     return this;
 }
 
+UserSchema.methods.saveImages = async function(images, flag){
+    /**
+     * flag example:
+     *  avatar (save user avatar's image)
+     *  album  (save album's images, flag should be an object type {flag:album, name:albumName} and images as an array of strings(url))
+     *  
+     */
+    if(flag){
+        if(typeof flag == 'string' && flag == 'avatar' && typeof images == 'string'){
+            
+        }
+    }
+    
+}
+
 UserSchema.methods.comparePassword = function(password){
     const hash = crypto.createHmac('sha256', salt)
         .update(password)
         .digest("hex")
-    
+
     if(hash == this.passSecure.hash){
         return true
     }
