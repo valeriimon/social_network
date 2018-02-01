@@ -1,6 +1,7 @@
 // var Router = require('koa-router');
 // var router = new Router();
 const path = require("path");
+const mongoose = require('mongoose');
 import Utils from '../commons/utils';
 module.exports = class Routes{
 	static init(app, router){
@@ -20,6 +21,7 @@ module.exports = class Routes{
 				console.log(output, image);
 				ctx.body = 'qwe';
 			})
+			
 		app.use(router.routes())
 	}
 }

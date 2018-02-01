@@ -17,6 +17,13 @@ const AlbumSchema = BaseModel.extend(new Schema({
 }))
 
 
-
+UserSchema.methods.saveImages = async function(images){
+    const mediaUsersDir = path.normalize(`${__dirname}/../../files/media/albums`);
+    let imgPath = `${mediaUsersDir}/album_id_${this._id.toString()}/avatars`;
+    let name = path.basename(images);
+    await Utils.rMkdir(imgPath);
+    await Utils.copyFile(images, imgPath);
+    return `media/albums/album_id_${this._id.toString()}/avatars/${name}`;
+}
 
 module.exports = mongoose.model('Album', AlbumSchema);
