@@ -68,6 +68,7 @@ nsp.on('connection', (socket)=> {
 
 nsp2.on('connection', (socket)=>{
   console.log('connected to second namespace');
+  
 })
 
 
