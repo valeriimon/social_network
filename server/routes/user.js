@@ -2,12 +2,13 @@
 const mongoose = require("mongoose");
 import User from "../models/User";
 import Access from "../commons/access";
+import io from '../server';
 const passport = require('koa-passport');
 var Router = require('koa-router');
 var router = new Router();
 router.prefix('/api/v1.0/user');
 //router.use([Access.can['user']]);
-
+;
 module.exports = class UserRoutes{
     static init(app){
        
