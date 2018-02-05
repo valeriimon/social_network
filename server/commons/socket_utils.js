@@ -9,10 +9,12 @@ export default class Sockets {
             socket.userInfo = {};
             next();
         });
+        NAMESPACES.messagesNsp = this.io.of('messaging')
         this.bindSockets();
     }
 
     bindSockets(){
+        /* online functional namespace */
         NAMESPACES.onlineNsp.on('connection', (socket) => {
             socket.on('online', (user_id)=> {
                 socket.userInfo.userId = user_id;
@@ -29,13 +31,60 @@ export default class Sockets {
                 socket.emit('user disconnected', socket.userInfo);
             })
         })
+        /* online functional namespace  */
+
+        /* messagings namespace */
+        NAMESPACES.messagesNsp.on('connection', (socket)=> {
+            socket.on('duo chatroom created', roomInfo =>{
+                /**
+                 * Plan of implementation on client side event 'chatroom created':
+                 *  user clicked on user whith whoom hi wants to make a conversation
+                 *  it will triggering the event 'chatroom created'
+                 *  roomName userID who started messaging + userId reciever, example: userId1&userId2
+                 *  example of roomInfo: {initiator: userId, target: userId}
+                 * 
+                 *   
+                 */
+                let roomName;
+                if( roomInfo.hasOwnProperty('initiator') && roomInfo.hasOwnProperty('target')){
+                    roomName = `${roomInfo['initiator']}&${roomInfo['target']}`;
+                    socket.join(roomName);
+                } else {
+                    socket.emit('socket error', ERRORS.BAD_REQUEST);
+                }
+            })
+            socket.on('duo chatroom leave', chatInfo => {
+                /**
+                 * TODO: thinking of message model 
+                 * chat info has to include all messages, example: {chatID:'', }
+                 * 
+                 */
+                const room = sockets.rooms[chatInfo.roomName];
+                socket.emit('notification leaving chat', {message: 'UserId left the chat'})
+            })
+            socket.on('disconnect', (socket)=> {
+                // TODO: send 'notification leaving chat' to all rooms where socket is
+
+            })
+            
+        })
+        /* messagings namespace */
     }
+    
     
 }
 
 export class NAMESPACES {
     static onlineNsp
+    static messagesNsp
     
+}
+
+export class ERRORS {
+    static BAD_REQUEST = {
+        status: 401,
+        message: "You have done a bad request, sorry"
+    }
 }
 
 
