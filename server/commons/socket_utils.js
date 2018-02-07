@@ -10,6 +10,7 @@ export default class Sockets {
             next();
         });
         NAMESPACES.messagesNsp = this.io.of('messaging')
+        NAMESPACES.notificationNsp = this.io.of('notification');
         this.bindSockets();
     }
 
@@ -69,6 +70,21 @@ export default class Sockets {
             
         })
         /* messagings namespace */
+
+        /* notification namespace */
+        NAMESPACES.notificationNsp.on('connection', socket => {
+            socket.on('message_send', messageInfo=>{
+                const onlineUsers = this.io.of('online').clients().connected;
+                for(let key in onlineUsers){
+                    let user = onlineUsers[key];
+                    // if(user.userInfo.hasOwnProperty('userId') && user.userInfo.userId == messageInfo.reciever){
+                        user.emit('message_recieved', {to:'', from:'', text:'Hello'});
+                    // }
+                }
+            })
+            
+        })
+        /* notification namespace */
     }
     
     
@@ -77,7 +93,7 @@ export default class Sockets {
 export class NAMESPACES {
     static onlineNsp
     static messagesNsp
-    
+    static notificationNsp
 }
 
 export class ERRORS {
