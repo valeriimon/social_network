@@ -1,14 +1,17 @@
 "use strick"
 const mongoose = require("mongoose");
 import User from "../models/User";
+import Access from "../commons/access";
+import io from '../server';
 const passport = require('koa-passport');
 var Router = require('koa-router');
 var router = new Router();
 router.prefix('/api/v1.0/user');
-
-
+//router.use([Access.can['user']]);
+;
 module.exports = class UserRoutes{
     static init(app){
+       
         router
         /*
         *   get user by id
@@ -58,16 +61,13 @@ module.exports = class UserRoutes{
         *   get user friend
         */ 
         .get('/friends/:userid', async (ctx)=>{
-            let id = mongoose.Types.ObjectId(ctx.params.userid)
-            let perpage = ctx.request.query.perpage;
-            let page = ctx.request.query.page;
-            let friends = await User.aggregate([
-                {$match: {_id: id}},
-                {$unwind: {path:"$friends", preserveNullAndEmptyArrays: true}},
-                {$lookup: {from:"users", localField:"friends.friend", foreignField:"_id", as:"friends.friend"}},
-                {$group: {_id:"$_id", friends:{$push:"$friends"}}},
-                {$project: {user:"$_id", friends:{$slice:["$friends", page, perpage], totalCount:{$size:"$friends"}}}}
-            ])
+            let user = await User.findById(ctx.params.userid);
+            let filter = {};
+            const [page, perpage] = [ctx.request.query.page, ctx.request.query.perpage];
+            try{
+                filter = JSON.parse(ctx.request.query._filter)
+            }catch(e){}
+            let friends = await user.getFriends(page, perpage, filter)
             ctx.body = friends;
         })
         /*

@@ -36,6 +36,7 @@ const UserSchema = BaseModel.extend(new Schema({
         {
             friend: {type: Schema.Types.ObjectId, ref: "User"},
             since: Date,
+            visits: Number,
             confirm: {type:Boolean, default: false},
             status: {type:String, enum:["recieve", "send"]}
         }
@@ -50,44 +51,62 @@ UserSchema.methods.create = async function(body){
     let result = Utils.secureValue(body.password);
     this.passSecure = result;
     if(body.hasOwnProperty("avatar")){
-        let image = await this.saveImages(body.avatar, 'avatar');
+        let image = await this.saveImages(body.avatar);
         body.avatars.push({url:image, isActive:false})        
     }
-    if(body.hasOwnProperty())
-    
     Object.assign(this, body);
     await this.save()
     return this;
 }
 
-UserSchema.methods.saveImages = async function(images, flag){
-    /**
-     * flag example:
-     *  avatar (save user avatar's image)
-     *  album  (save album's images, flag should be an object type {flag:album, name:albumName} and images as an array of strings(url))
-     *  
-     */
+UserSchema.methods.saveImages = async function(images){
     const mediaUsersDir = path.normalize(`${__dirname}/../../files/media/users`);
-    if(flag && images.length){
-        if(flag == 'avatar' && typeof images == 'string'){
-            let imgPath = `${mediaUsersDir}/user_id_${this._id.toString()}/avatars`;
-            let name = path.basename(images);
-            await Utils.rMkdir(imgPath);
-            await Utils.copyFile(images, imgPath);
-            return `media/users/user_id_${this._id.toString()}/${name}`;
+    let imgPath = `${mediaUsersDir}/user_id_${this._id.toString()}/avatars`;
+    let name = path.basename(images);
+    await Utils.rMkdir(imgPath);
+    await Utils.copyFile(images, imgPath);
+    return `media/users/user_id_${this._id.toString()}/avatars/${name}`;
+}
+
+UserSchema.methods.getFriends = async function(page, perpage, filter = {}){
+    // filter fields: fullname(firstname, lastname), age, country, city, gender,
+    function regExpByVarType (data, flags){
+        switch (typeof data) {
+            case 'string' : return new RegExp(data, flags); break;
+            case 'number' : return data; break;
         }
-        else if(flag == 'album' && typeof images == 'object'){
-            let imagesToSave = [];
-            for(let image of images){
-                let imgPath = `${mediaUsersDir}/user_id_${this._id.toString()}/album/${flag.name}`;
-                let name = path.basename(image);
-                await Utils.rMkdir(imgPath);
-                await Utils.copyFile(image, imgPath)
-                imagesToSave.push(`media/users/user_id_${this.id.toString()}/album/${flag.name}/${name}`)
-            }
-            return imagesToSave;
-        }   
     }
+    let $match = {};
+    let confirm = filter.confirm;
+    delete filter.confirm;
+    for(let key in filter){
+        if(key == 'fullname'){
+            let [first, last] = filter[key].split(' ');
+            let fullnameArray = [{firstname: RegExp(first, 'i')}, {lastname: RegExp(last? last : first, 'i')}]; 
+            if(first && last) {
+                $match.$and = fullnameArray;
+            } else if(first) {
+                $match.$or = fullnameArray;
+            }
+        } 
+        else {
+            $match[key] = regExpByVarType(filter[key], 'i'); 
+        }
+    }
+    
+    
+
+    let response = await this.aggregate([
+        {$unwind:{path: '$friends'}},
+        {$match: {'$friends.confirm': confirm}},
+        {$lookup: {from: 'users', localField: 'friends.friend', foreignField: '_id', as: 'friends.friend'}},
+        {$group: {_id: null, friends: {$push: '$friends.friend'}}},
+        {$replaceRoot: { newRoot: '$friends'}},
+        {$match},
+        {$project: {friends: {$slice: ['$$ROOT', page, perpage] }, totalCount: {$size: '$$ROOT'}}}
+    ])
+
+    return response;
 }
 
 UserSchema.methods.comparePassword = function(password){

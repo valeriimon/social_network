@@ -4,9 +4,11 @@ export default class Access{
           let role = ctx.state.user.role
           if(roles && roles.indexOf(role)>-1){
               next()
+          } else if(!role){
+              next()
           } else {
-              ctx.throw(403)
-          }  
+            ctx.throw(403)
+          } 
         }
     }
 }
